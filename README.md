@@ -64,24 +64,27 @@ and scatter-gather. Spread out, never centralize.
 
 ## Layout and use
 
-The library name `(igropyr blas)` maps to `igropyr/blas.sc`, so add this
-repository's root to your library directories and include `.sc` in the
-library extensions:
+The source is `blas.sc`; the library it defines is `(igropyr blas)`.
+Chez resolves that name to `igropyr/blas.sc` on the library path, so put
+`blas.sc` in an `igropyr/` directory that is on your `CHEZSCHEMELIBDIRS`,
+and include `.sc` in the library extensions. Inside Igropyr, drop it
+alongside the other `igropyr/*.sc` sources — it is already listed in the
+build.
 
 ```sh
 CHEZSCHEMELIBDIRS=. CHEZSCHEMELIBEXTS=.sc scheme --script your-program.ss
 ```
 
-Inside Igropyr, drop `igropyr/blas.sc` alongside the other `igropyr/*.sc`
-sources; it is already listed in the build.
-
 ## Test
 
 The scoring contract is pinned against an independent double-
 accumulation reference; whichever lane is active must agree within
-tolerance, and every bounds violation must fail as a Scheme error:
+tolerance, and every bounds violation must fail as a Scheme error. From
+a fresh clone, expose the file under its `igropyr/` library name and run
+the test:
 
 ```sh
+ln -s . igropyr    # (igropyr blas) -> ./blas.sc
 CHEZSCHEMELIBDIRS=. CHEZSCHEMELIBEXTS=.sc scheme -q --script test/blas.sc
 ```
 
