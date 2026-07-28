@@ -20,6 +20,7 @@ BLAS installed.
 ;;   query:  float32 bytevector [dim]
 ;;   scores: float32 bytevector [n], overwritten
 (blas-available?)                        ; #t when a native BLAS backs the call
+(blas-scores-pure! base n dim query scores)   ; same contract, always the Scheme lane
 ```
 
 All four buffers are native-endian float32 `bytevector`s. `n` rows of
@@ -38,6 +39,22 @@ accumulation tolerance (~1e-4 for unit vectors).
 Callers with a fused scan of their own (inline filtering, early exit)
 can keep it behind `blas-available?` and use this only for the big-scan
 lane.
+
+`blas-scores-pure!` runs the Scheme lane regardless of what is
+installed. On a host that has a BLAS, `blas-scores!` would otherwise
+never execute the fallback — so the code every result ultimately rests
+on would be exercised on no such machine. It is exported so a test can
+pin it everywhere, and for callers who want the same arithmetic on every
+platform rather than whichever lane the host happens to provide.
+
+## Chez version
+
+Chez Scheme 9.5.8 and up. The query is widened to f64 once into a
+scratch buffer, which is fastest backed by an `flvector` — a Chez 10
+type — so the backing is chosen at expand time with `meta-cond`: Chez 10
+takes the `flvector`, older releases a `bytevector` of doubles. Scores
+are bit-for-bit equal either way; the `bytevector` lane measures ~14%
+slower, and only on the non-BLAS path.
 
 ## Safety
 
