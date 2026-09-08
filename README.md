@@ -107,7 +107,7 @@ CHEZSCHEMELIBDIRS=. CHEZSCHEMELIBEXTS=.sc scheme -q --script test/blas.sc
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE).
 
 [chez]: https://www.scheme.com
 [igropyr]: https://github.com/guenchi/Igropyr
